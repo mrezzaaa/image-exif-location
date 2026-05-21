@@ -2,6 +2,16 @@
 
 Script Python untuk otomatis menambahkan informasi lokasi (GPS, alamat, timestamp, peta) ke foto dalam batch mode.
 
+## 👁️ Preview
+
+### Sebelum (Before)
+![Before](images/WhatsApp%20Image%202026-05-21%20at%2014.49.31.jpeg)
+
+### Sesudah (After)
+![After](output/WhatsApp%20Image%202026-05-21%20at%2014.49.31.jpeg)
+
+*Hasil processing dengan informasi lokasi, timestamp, dan peta satelit*
+
 ## ✨ Fitur
 
 - ✅ **Batch Processing**: Proses semua foto di folder `images/` secara otomatis
