@@ -5,10 +5,10 @@ Script Python untuk otomatis menambahkan informasi lokasi (GPS, alamat, timestam
 ## 👁️ Preview
 
 ### Sebelum (Before)
-![Before](images/WhatsApp%20Image%202026-05-21%20at%2014.49.31.jpeg)
+![Before](images/Menara-astra.jpg)
 
 ### Sesudah (After)
-![After](output/WhatsApp%20Image%202026-05-21%20at%2014.49.31.jpeg)
+![After](output/Menara-astra.jpg)
 
 *Hasil processing dengan informasi lokasi, timestamp, dan QR code Google Maps*
 
