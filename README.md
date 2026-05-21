@@ -1,6 +1,6 @@
 # 📸 Image EXIF Location - Batch Processor
 
-Script Python untuk otomatis menambahkan informasi lokasi (GPS, alamat, timestamp, peta) ke foto dalam batch mode.
+Script Python untuk otomatis menambahkan informasi lokasi (GPS, alamat, timestamp, QR code maps) ke foto dalam batch mode.
 
 ## 👁️ Preview
 
@@ -10,20 +10,19 @@ Script Python untuk otomatis menambahkan informasi lokasi (GPS, alamat, timestam
 ### Sesudah (After)
 ![After](output/WhatsApp%20Image%202026-05-21%20at%2014.49.31.jpeg)
 
-*Hasil processing dengan informasi lokasi, timestamp, dan peta satelit*
+*Hasil processing dengan informasi lokasi, timestamp, dan QR code Google Maps*
 
 ## ✨ Fitur
 
 - ✅ **Batch Processing**: Proses semua foto di folder `images/` secara otomatis
 - ✅ **Input Koordinat**: Prompt interaktif untuk memasukkan Latitude & Longitude
 - ✅ **Format Fleksibel**: Support input comma-separated (e.g., `3.886561, 98.47930`)
-- ✅ **Index Auto-Increment**: Nomor indeks otomatis meningkat untuk setiap foto
+- ✅ **QR Code Maps**: QR code untuk akses langsung ke Google Maps (kiri bawah)
 - ✅ **Responsive Font**: Ukuran font otomatis 3% dari lebar gambar
-- ✅ **Posisi Tetap**: Teks di kanan bawah, peta di kiri bawah
+- ✅ **Posisi Tetap**: Teks di kanan bawah, QR code di kiri bawah
 - ✅ **Align Right**: Text align ke kanan untuk tampilan profesional
 - ✅ **Metadata GPS**: Tambahan GPS EXIF data ke setiap foto
 - ✅ **Geocoding**: Konversi koordinat ke alamat (OpenStreetMap)
-- ✅ **Peta Satelit**: Download peta dari Google Static Maps (opsional)
 - ✅ **Tanggal Indonesia**: Format tanggal dalam bahasa Indonesia
 - ✅ **Auto Output**: Hasil otomatis tersimpan ke folder `output/`
 
@@ -49,21 +48,8 @@ pip install -r requirements.txt
 
 Atau install manual:
 ```bash
-pip install Pillow piexif requests
+pip install Pillow piexif requests qrcode
 ```
-
-### 3. Setup Google Maps API (Opsional)
-
-Jika ingin menambahkan peta satelit:
-1. Buka [Google Cloud Console](https://console.cloud.google.com/)
-2. Buat project baru
-3. Enable `Maps Static API`
-4. Generate API Key
-5. Edit `script.py` dan ganti:
-```python
-GOOGLE_MAPS_API_KEY = "YOUR_API_KEY"
-```
-dengan API key Anda
 
 ## 📁 Struktur Folder
 
@@ -131,12 +117,11 @@ Nama Desa/Kelurahan
 Kecamatan [District]
 Kabupaten [City]
 [Province]
-Index number: 3771
 ```
 
 - **Timestamp**: Tanggal & waktu dalam bahasa Indonesia
 - **Alamat**: Diambil dari koordinat (via OpenStreetMap)
-- **Peta**: Snapshot satelit lokasi (di kiri bawah, jika API key tersedia)
+- **QR Code**: Scannable QR code untuk akses Google Maps (di kiri bawah)
 - **GPS Data**: Koordinat disimpan di EXIF metadata
 
 ## ⚙️ Konfigurasi
@@ -146,8 +131,6 @@ Edit `script.py` untuk mengubah:
 ```python
 IMAGES_FOLDER = "images"        # Folder input
 OUTPUT_FOLDER = "output"        # Folder output
-INDEX_NUMBER = "3771"           # Nomor indeks awal
-GOOGLE_MAPS_API_KEY = "YOUR_API_KEY"  # Google Maps API Key
 ```
 
 ## 🔧 Troubleshooting
@@ -159,7 +142,7 @@ font = ImageFont.truetype("/path/to/font.ttf", font_size)
 ```
 
 ### API Rate Limit
-Jika mendapat error dari API, script otomatis menambah delay 1 detik antar foto.
+Jika mendapat error dari OpenStreetMap API, script otomatis menambah delay 1 detik antar foto.
 
 ### Foto tidak terproses
 - Pastikan format foto: `.jpg`, `.jpeg`, atau `.png`
@@ -170,7 +153,7 @@ Jika mendapat error dari API, script otomatis menambah delay 1 detik antar foto.
 
 Foto akan memiliki:
 - Text overlay dengan timestamp & alamat (kanan bawah)
-- Peta satelit (kiri bawah, opsional)
+- QR code untuk Google Maps (kiri bawah)
 - GPS metadata di EXIF
 
 ## 📄 File yang Dihasilkan

@@ -6,6 +6,7 @@ from datetime import datetime
 import os
 from pathlib import Path
 import time
+import qrcode
 
 # =========================================
 # CONFIG
@@ -13,15 +14,9 @@ import time
 
 IMAGES_FOLDER = "images"
 OUTPUT_FOLDER = "output"
-INDEX_NUMBER = "3771"
 
 # Create output folder if it doesn't exist
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
-
-# Google Static Maps API
-# https://console.cloud.google.com/
-
-GOOGLE_MAPS_API_KEY = "AIzaSyDR57mTx7b9Z7gOjvYNb8JvQw64edCMVFg"
 
 # =========================================
 # INPUT COORDINATES
@@ -54,7 +49,7 @@ while True:
 # FUNCTION TO PROCESS SINGLE IMAGE
 # =========================================
 
-def process_image(input_path, output_path, index_number="3771"):
+def process_image(input_path, output_path):
     """Process a single image with coordinates and save to output"""
     
     # OpenStreetMap Reverse Geocoding
@@ -65,15 +60,8 @@ def process_image(input_path, output_path, index_number="3771"):
         f"&lon={LONGITUDE}"
     )
     
-    MAP_URL = (
-        f"https://maps.googleapis.com/maps/api/staticmap"
-        f"?center={LATITUDE},{LONGITUDE}"
-        f"&zoom=17"
-        f"&size=300x300"
-        f"&maptype=satellite"
-        f"&markers=color:red%7C{LATITUDE},{LONGITUDE}"
-        f"&key={GOOGLE_MAPS_API_KEY}"
-    )
+    # Google Maps URL for QR code
+    MAPS_URL = f"https://www.google.com/maps?q={LATITUDE},{LONGITUDE}"
     
     # =========================================
     # GET ADDRESS FROM COORDINATE
@@ -117,10 +105,9 @@ def process_image(input_path, output_path, index_number="3771"):
                 
                 formatted_address = f"""
 {village}
-Kecamatan {district}
-Kabupaten {city}
+{district}
+{city}
 {province}
-Index number: {index_number}
 """.strip()
             except Exception as e:
                 pass
@@ -128,21 +115,19 @@ Index number: {index_number}
         pass
     
     # =========================================
-    # DOWNLOAD MAP (OPTIONAL)
+    # GENERATE QR CODE
     # =========================================
     
-    map_image = None
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=2,
+    )
+    qr.add_data(MAPS_URL)
+    qr.make(fit=True)
     
-    if GOOGLE_MAPS_API_KEY != "YOUR_API_KEY":
-        try:
-            map_response = requests.get(MAP_URL, timeout=5)
-            if map_response.status_code == 200:
-                try:
-                    map_image = Image.open(BytesIO(map_response.content))
-                except:
-                    pass
-        except:
-            pass
+    qr_image = qr.make_image(fill_color="black", back_color="white")
     
     # =========================================
     # OPEN MAIN IMAGE
@@ -152,22 +137,19 @@ Index number: {index_number}
     draw = ImageDraw.Draw(img)
     
     # =========================================
-    # PASTE MAP IF AVAILABLE
+    # PASTE QR CODE AT LEFT BOTTOM
     # =========================================
     
-    if map_image:
-        try:
-            map_width = 280
-            map_height = 280
-            
-            map_image = map_image.resize((map_width, map_height))
-            
-            map_x = 40
-            map_y = img.height - map_height - 40
-            
-            img.paste(map_image, (map_x, map_y))
-        except:
-            pass
+    try:
+        qr_size = 280
+        qr_image = qr_image.resize((qr_size, qr_size))
+        
+        qr_x = 40
+        qr_y = img.height - qr_size - 40
+        
+        img.paste(qr_image, (qr_x, qr_y))
+    except:
+        pass
     
     # =========================================
     # TIMESTAMP
@@ -300,7 +282,6 @@ else:
         
         successful = 0
         failed = 0
-        current_index = int(INDEX_NUMBER)
         
         for image_path in sorted(image_files):
             try:
@@ -309,10 +290,9 @@ else:
                 
                 print(f"⏳ Processing: {image_path.name}...", end=" ", flush=True)
                 
-                if process_image(str(image_path), output_path, str(current_index)):
+                if process_image(str(image_path), output_path):
                     print("✓ Selesai")
                     successful += 1
-                    current_index += 1
                 
                 # Delay untuk menghindari rate limit
                 time.sleep(1)
